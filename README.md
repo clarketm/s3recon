@@ -13,7 +13,19 @@ $ pip install s3recon
 ```
 
 ## Usage
+```text
 
+usage: s3recon [-h] [-o file] [-t seconds] word_list [word_list ...]
+
+positional arguments:
+  word_list                      read words from one or more <word-list> files
+
+optional arguments:
+  -h, --help                     show this help message and exit
+  -o file, --output file         write output to <file> (default: stdout)
+  -t seconds, --timeout seconds  http request timeout in <seconds> (default: 30)
+  
+```
 
 
 ## License

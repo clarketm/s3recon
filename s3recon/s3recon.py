@@ -165,7 +165,7 @@ def cli():
         "word_list",
         nargs="+",
         type=argparse.FileType("r"),
-        help="read input from one or more <word-list> each containing a list of words to permute",
+        help="read words from one or more <word-list> files",
     )
     args = parser.parse_args()
 
