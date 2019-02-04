@@ -1,9 +1,8 @@
 import datetime
 import warnings
 from asyncio import get_event_loop, gather
-from collections import defaultdict, Mapping
-from copy import deepcopy
-from functools import reduce
+from collections import defaultdict
+from mergedeep import merge
 from random import choice
 
 import requests
@@ -65,54 +64,24 @@ def collect_results(r):
 
 def read_config():
     from pathlib import Path
+
     config = {}
 
     config_hierarchy = [
-        Path(Path.home(), 's3finder.yaml'),
-        Path(Path.home(), 's3finder.yml'),
-        Path(Path.cwd(), 's3finder.yaml'),
-        Path(Path.cwd(), 's3finder.yml'),
+        Path(Path.home(), "s3finder.yaml"),
+        Path(Path.home(), "s3finder.yml"),
+        Path(Path.cwd(), "s3finder.yaml"),
+        Path(Path.cwd(), "s3finder.yml"),
     ]
 
     for c in config_hierarchy:
         try:
             c = yaml.load(open(c, "r"))
-            deepmerge(config, c)
+            merge(config, c)
         except Exception as e:
             pass
 
     return config
-
-def deepmerge(target, *sources):
-    """
-    :param target:
-    :param *sources:
-    """
-
-    def _deepmerge(target, source):
-        """
-        :param target:
-        :param source:
-        """
-        for key in source:
-            if key in target:
-                if isinstance(target[key], Mapping) and isinstance(
-                        source[key], Mapping
-                ):
-                    # If the key for both `target` and `source` are Mapping types, then recurse.
-                    _deepmerge(target[key], source[key])
-                elif target[key] == source[key]:
-                    # If a key exists in both objects and the values are `same`, the value from the `target` object will be used.
-                    pass
-                else:
-                    # If a key exists in both objects and the values are `different`, the value from the `source` object will be used.
-                    target[key] = deepcopy(source[key])
-            else:
-                # If the key exists only in `source`, the value from the `source` object will be used.
-                target[key] = deepcopy(source[key])
-        return target
-
-    return reduce(_deepmerge, sources, target)
 
 
 def main(envs, formats, regions, seps, useragents, words):
@@ -156,6 +125,4 @@ def cli():
 
 
 if __name__ == "__main__":
-    # cli()
-    c = read_config()
-    print(c)
+    cli()
