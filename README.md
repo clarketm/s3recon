@@ -8,9 +8,10 @@ Amazon S3 bucket finder.
 [Check out the s3finder docs](https://s3finder.readthedocs.io/en/latest/)
 
 ## Installation
-
+WIP
 
 ## Usage
+WIP
 
 
 ## License
