@@ -116,3 +116,7 @@ venv.bak/
 !*.postman_collection*
 !*.postman_environment*
 !*/mocks/*
+
+# Sample data
+*.tar.gz
+*.tgz

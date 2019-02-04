@@ -1,0 +1,5 @@
+db:
+  host: localhost
+  port: 27017
+  database: s3finder
+  collection: buckets
