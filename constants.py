@@ -50,5 +50,4 @@ sep_list = ["-", "_", "."]
 
 useragent_list = [l.strip() for l in open("./useragents.txt", "r")]
 
-# word_list = [l.strip() for l in open("./words.txt", "r")]
-word_list = ["sinclair"]
+word_list = [l.strip() for l in open("./words.txt", "r")]
