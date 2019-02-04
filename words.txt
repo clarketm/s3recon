@@ -1,0 +1,6 @@
+walmart
+amazon
+kmart
+bestbuy
+apple
+microsoft
