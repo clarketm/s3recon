@@ -26,6 +26,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/clarketm/s3recon",
     packages=setuptools.find_packages(),
+    include_package_data=True,
     install_requires=install_requires,
     entry_points={"console_scripts": ["s3recon=s3recon.s3recon:cli"]},
     classifiers=(

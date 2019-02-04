@@ -1,3 +1,1 @@
-include LICENSE README.md
-recursive-include s3recon *
-recursive-include data *
+include LICENSE README.md s3recon/s3recon.yml data/*.txt

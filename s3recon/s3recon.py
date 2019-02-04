@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-
 from asyncio import get_event_loop, gather
 from collections import defaultdict
 from datetime import datetime
 from json import dumps
+from logging import getLogger, basicConfig, INFO
 from os import environ
 from pathlib import Path
 from random import choice
@@ -31,6 +31,11 @@ from s3recon.constants import (
 )
 
 filterwarnings("ignore", category=InsecureRequestWarning)
+
+logger = getLogger(__name__)
+
+# TODO: opt to change log-level
+basicConfig(format="%(message)s", level=INFO)
 
 
 def bucket_exists(url, timeout):
@@ -60,7 +65,7 @@ def find_bucket(url, timeout):
     if exists:
         access = public_key if public else private_key
         access_word = public_text if public else private_text
-        print(f"{access} {access_word} {url}", end="\n")
+        logger.info(f"{access} {access_word} {url}")
         return access, url
 
     return None
@@ -88,7 +93,6 @@ def read_config():
 
     for c in config_hierarchy:
         try:
-            print(c)
             c = load(open(c, "r"))
             merge(config, c)
         except IOError:
@@ -123,8 +127,8 @@ def main(words, timeout, output):
     private, public = collect_results(r)
     stop = datetime.now()
 
-    print(f"Complete after: {stop - start}")
-    print(f"Output written to: {output.name}")
+    logger.info(f"Complete after: {stop - start}")
+    logger.info(f"Output written to: {output.name}")
 
     output.write(
         dumps(
