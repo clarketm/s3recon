@@ -1,11 +1,24 @@
-# [s3recon](https://s3recon.readthedocs.io/en/latest/)
+```eval_rst
+.. meta::
+   :description: s3recon: Amazon S3 bucket finder and crawler.
 
-[![PyPi release](https://img.shields.io/pypi/v/s3recon.svg)](https://pypi.org/project/s3recon/)
-[![Documentation Status](https://readthedocs.org/projects/s3recon/badge/?version=latest)](https://s3recon.readthedocs.io/en/latest/?badge=latest)
+.. title:: s3recon
+```
 
-Amazon S3 bucket finder and crawler.
+# [s3recon](https://pypi.org/project/s3recon/)
 
-[Check out the s3recon docs](https://s3recon.readthedocs.io/en/latest/)
+```eval_rst
+Version |version|
+
+.. image:: https://img.shields.io/pypi/v/s3recon.svg
+    :target: https://pypi.org/project/s3recon/
+
+.. image:: https://pepy.tech/badge/s3recon
+    :target: https://pepy.tech/project/s3recon
+    
+```
+
+**Amazon S3 bucket finder and crawler.**
 
 ## Installation
 
@@ -27,8 +40,7 @@ optional arguments:
   -t seconds, --timeout seconds  http request timeout in <seconds> (default: 30)
   
 ```
-
-
 ## License
 
-MIT &copy; [**Travis Clarke**](https://blog.travismclarke.com/)
+MIT © [**Travis Clarke**](https://blog.travismclarke.com/)
+
