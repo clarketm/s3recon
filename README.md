@@ -1,17 +1,19 @@
-# [s3finder](https://s3finder.readthedocs.io/en/latest/)
+# [s3recon](https://s3recon.readthedocs.io/en/latest/)
 
-[![PyPi release](https://img.shields.io/pypi/v/s3finder.svg)](https://pypi.org/project/s3finder/)
-[![Documentation Status](https://readthedocs.org/projects/s3finder/badge/?version=latest)](https://s3finder.readthedocs.io/en/latest/?badge=latest)
+[![PyPi release](https://img.shields.io/pypi/v/s3recon.svg)](https://pypi.org/project/s3recon/)
+[![Documentation Status](https://readthedocs.org/projects/s3recon/badge/?version=latest)](https://s3recon.readthedocs.io/en/latest/?badge=latest)
 
-Amazon S3 bucket finder.
+Amazon S3 bucket finder and crawler.
 
-[Check out the s3finder docs](https://s3finder.readthedocs.io/en/latest/)
+[Check out the s3recon docs](https://s3recon.readthedocs.io/en/latest/)
 
 ## Installation
-WIP
+```bash
+$ pip install s3recon
+```
 
 ## Usage
-WIP
+
 
 
 ## License

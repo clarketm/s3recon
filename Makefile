@@ -21,8 +21,8 @@ endif
 
 .PHONY: format
 f format:
-	python -m black -l 110 .
+	python -m black .
 
 .PHONY: docstring
 docstring:
-	pyment -w ./api_tools
+	pyment -w ./s3recon

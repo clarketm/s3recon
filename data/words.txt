@@ -1,6 +1,7 @@
 walmart
-amazon
-kmart
-bestbuy
+google
 apple
 microsoft
+uber
+lyft
+amazon
