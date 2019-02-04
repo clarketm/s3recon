@@ -12,6 +12,7 @@ from warnings import filterwarnings
 
 import requests
 from mergedeep import merge
+from requests import RequestException
 from urllib3.exceptions import InsecureRequestWarning
 from yaml import load
 
@@ -19,6 +20,7 @@ if not __package__:
     path.insert(0, str(Path(Path(__file__).parent.parent.parent)))
 
 
+from s3recon import __version__
 from s3recon.constants import (
     useragent_list,
     format_list,
@@ -46,7 +48,7 @@ def bucket_exists(url, timeout):
         status_code = res.status_code
         exists = status_code != 404
         public = status_code == 200
-    except Exception:
+    except RequestException:
         pass
 
     return exists, public
@@ -86,9 +88,10 @@ def read_config():
 
     for c in config_hierarchy:
         try:
+            print(c)
             c = load(open(c, "r"))
             merge(config, c)
-        except Exception as e:
+        except IOError:
             pass
 
     return config
@@ -112,16 +115,15 @@ def main(words, timeout, output):
         for env in environments
     }
 
-    r = loop.run_until_complete(
-        gather(
-            *[loop.run_in_executor(None, find_bucket, url, timeout) for url in url_list]
-        )
+    tasks = gather(
+        *[loop.run_in_executor(None, find_bucket, url, timeout) for url in url_list]
     )
+    r = loop.run_until_complete(tasks)
 
     private, public = collect_results(r)
     stop = datetime.now()
 
-    print(f"Complete after: {(stop - start).strftime('%H:%M:%S')}")
+    print(f"Complete after: {stop - start}")
     print(f"Output written to: {output.name}")
 
     output.write(
@@ -159,6 +161,9 @@ def cli():
         metavar="seconds",
         default=30,
         help="http request timeout in <seconds> (default: 30)",
+    )
+    parser.add_argument(
+        "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )
     # parser.add_argument("words", nargs="?", type=argparse.FileType("r"), default=stdin, help="list of words to permute")
     parser.add_argument(
