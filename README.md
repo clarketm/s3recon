@@ -38,12 +38,15 @@ optional arguments:
 
 ## Example
 
-#### 1. Download a word-list. The [SecLists](https://github.com/clarketm/s3recon/edit/master/README.md) repository has a multitude of word-lists to chose from. For this example, let's download the sample word-list included in this repository.
+#### 1. Download a word-list. 
+The [SecLists](https://github.com/clarketm/s3recon/edit/master/README.md) repository has a multitude of word-lists to chose from. For this example, let's download the sample word-list included in this repository.
+
 ```bash
 $ curl -sSfL -o "word-list.txt" "https://raw.githubusercontent.com/clarketm/s3recon/master/data/words.txt"
 ```
 
-#### 2. Run `s3recon` against the `word-list.txt` file and output the `public` S3 buckets to a json file named `results.json`.
+#### 2. Run `s3recon`. 
+Execute `s3recon` using the `word-list.txt` file and output the `public` S3 buckets to a json file named `results.json`.
 
 ```bash
 $ s3recon "word-list.txt" -o "results.json" --public
@@ -56,7 +59,8 @@ $ s3recon "word-list.txt" -o "results.json" --public
 ...
 ```
 
-#### 3. Inspect the `results.json` file to see the S3 buckets you have discovered!
+#### 3. Inspect the results. 
+Check the `results.json` output file to view the S3 buckets you have discovered!
 
 ```bash
 $ cat "results.json"
@@ -77,8 +81,9 @@ $ cat "results.json"
 
 > **Note:** to include `private` buckets in the results omit the `-p, --public` flag from the command.
 
-#### 4. Crawl the results list and enumerate the static files located in each bucket
-Coming soon!
+#### 4. Crawl the results.
+Enumerate the static files located in each bucket and record the findings.
+> Coming soon!
 
 
 ## FAQ
