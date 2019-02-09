@@ -112,7 +112,7 @@ def main(words, timeout, output, only_public):
 
     url_list = {
         f.format(
-            region=f".{region}" if region else "",
+            region=f"s3.{region}" if region else "s3",
             word=word,
             sep=sep if env else "",
             env=env,
