@@ -130,7 +130,7 @@ regions: [ "us-west-2", ...]
 ```
 
 
-#### Q: How do I customize the values of the environment used in the recon?
+#### Q: How do I customize the environment values used in the recon?
 #### A: 
 The *environments* are modifiers permuted with each item of the *word-list* (and the *separator*) to construct the bucket value in request.
 The value can be altered by setting the `environments` array in your `s3recon.yml` configuration file.
