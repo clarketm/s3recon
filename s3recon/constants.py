@@ -6,8 +6,8 @@ public_text = "PUBLIC"
 format_list = [
     "https://s3{region}.amazonaws.com/{word}{sep}{env}",
     "https://s3{region}.amazonaws.com/{env}{sep}{word}",
-    "https://{word}{sep}{env}.s3{region}.amazonaws.com",
-    "https://{env}{sep}{word}.s3{region}.amazonaws.com",
+    # "https://{word}{sep}{env}.s3{region}.amazonaws.com",
+    # "https://{env}{sep}{word}.s3{region}.amazonaws.com",
 ]
 
 useragent_list = [
