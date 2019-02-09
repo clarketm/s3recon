@@ -56,7 +56,7 @@ optional arguments:
 ## Example
 
 #### 1. Download a word-list. 
-The [SecLists](https://github.com/clarketm/s3recon/edit/master/README.md) repository has a multitude of word-lists to chose from. For this example, let's download the sample word-list included in this repository.
+The [SecLists](https://github.com/clarketm/s3recon/edit/master/README.md) repository has a multitude of word-lists to choose from. For this example, let's download the sample word-list included in this repository.
 
 ```bash
 $ curl -sSfL -o "word-list.txt" "https://raw.githubusercontent.com/clarketm/s3recon/master/data/words.txt"
