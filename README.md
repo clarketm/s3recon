@@ -7,7 +7,6 @@
 Amazon S3 bucket finder and crawler.
 
 <br>
-<br>
 <a href="https://github.com/clarketm/s3recon">
   <p align="center"><img width="40%" src="https://raw.githubusercontent.com/clarketm/s3recon/master/recon.jpeg" /></p>
 </a>
