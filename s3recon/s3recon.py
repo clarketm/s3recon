@@ -93,25 +93,30 @@ def read_config():
 
     for c in config_hierarchy:
         try:
-            c = load(open(c, "r"))
+            c = load(open(c, "r")) or {}
             merge(config, c)
-        except IOError:
+        except (IOError, TypeError):
             pass
 
     return config
 
 
-def main(words, timeout, output):
+def main(words, timeout, output, only_public):
     start = datetime.now()
     loop = get_event_loop()
 
     config = read_config()
-    regions = config.get("regions")
-    separators = config.get("separators")
-    environments = config.get("environments")
+    regions = config.get("regions") or [""]
+    separators = config.get("separators") or [""]
+    environments = config.get("environments") or [""]
 
     url_list = {
-        f.format(region=region, word=word, sep=sep if env else "", env=env)
+        f.format(
+            region=f".{region}" if region else "",
+            word=word,
+            sep=sep if env else "",
+            env=env,
+        )
         for f in format_list
         for region in regions
         for word in words
@@ -130,15 +135,15 @@ def main(words, timeout, output):
     logger.info(f"Complete after: {stop - start}")
     logger.info(f"Output written to: {output.name}")
 
-    output.write(
-        dumps(
-            {
-                "private": {"total": len(private), "hits": private},
-                "public": {"total": len(public), "hits": public},
-            },
-            indent=4,
-        )
-    )
+    results = {
+        "private": {"total": len(private), "hits": private},
+        "public": {"total": len(public), "hits": public},
+    }
+
+    if only_public:
+        del results["private"]
+
+    output.write(dumps(results, indent=4))
 
 
 def cli():
@@ -157,6 +162,12 @@ def cli():
         metavar="file",
         default=stdout,
         help="write output to <file> (default: stdout)",
+    )
+    parser.add_argument(
+        "-p",
+        "--public",
+        action="store_true",
+        help="only include 'public' buckets in the output",
     )
     parser.add_argument(
         "-t",
@@ -180,9 +191,10 @@ def cli():
 
     output = args.output
     timeout = args.timeout
+    public = args.public
     words = {l.strip() for f in args.word_list for l in f}
 
-    main(words=words, timeout=timeout, output=output)
+    main(words=words, timeout=timeout, output=output, only_public=public)
 
 
 if __name__ == "__main__":
