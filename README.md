@@ -6,6 +6,12 @@
 
 Amazon S3 bucket finder and crawler.
 
+<br>
+<br>
+<a href="https://github.com/clarketm/s3recon">
+  <p align="center"><img width="40%" src="https://raw.githubusercontent.com/clarketm/s3recon/master/recon.jpeg" /></p>
+</a>
+
 [Check out the s3recon docs](https://s3recon.readthedocs.io/en/latest/)
 
 ## Installation
