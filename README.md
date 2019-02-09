@@ -33,12 +33,12 @@ optional arguments:
 
 ## Example
 
-#### 1. Download a word-list. The [SecLists](https://github.com/clarketm/s3recon/edit/master/README.md) repository has a multitude of word-lists to choice from. For this example let's download the sample word-list included in this repository.
+#### 1. Download a word-list. The [SecLists](https://github.com/clarketm/s3recon/edit/master/README.md) repository has a multitude of word-lists to chose from. For this example, let's download the sample word-list included in this repository.
 ```bash
-$ curl -sSfL -o word-list.txt "https://raw.githubusercontent.com/clarketm/s3recon/master/data/words.txt" | tar -xz
+$ curl -sSfL -o "word-list.txt" "https://raw.githubusercontent.com/clarketm/s3recon/master/data/words.txt"
 ```
 
-#### 2. Run `s3recon` against the `word-list.txt` file and output the `public` bucket results to a json file named `results.json`.
+#### 2. Run `s3recon` against the `word-list.txt` file and output the `public` S3 buckets to a json file named `results.json`.
 
 ```bash
 $ s3recon "word-list.txt" -o "results.json" --public
@@ -51,7 +51,7 @@ $ s3recon "word-list.txt" -o "results.json" --public
 ...
 ```
 
-#### 3. Inspect the `results.json` file to see the S3 buckets 💰 you have discovered!
+#### 3. Inspect the `results.json` file to see the S3 buckets you have discovered!
 
 ```bash
 $ cat "results.json"
@@ -70,18 +70,18 @@ $ cat "results.json"
 }
 ```
 
-> Note: to limit the results set to **only** *public* buckets use the `-p, --public` flag.
+> **Note:** to include `private` buckets in the results omit the `-p, --public` flag from the command.
 
-#### 4. Crawl the results list and enumerate the static files available in each bucket
+#### 4. Crawl the results list and enumerate the static files located in each bucket
 Coming soon!
 
 
 ## FAQ
 #### Q: How do I configure this utility?
 #### A: 
-`s3recon` can be configure using a yaml configuration file location in either the current working directory (e.g. `./s3recon.yml`) or the users home diretory (e.g. `~/s3recon.yml`).
+`s3recon` can be configure using a yaml configuration file located in either the current working directory (e.g. `./s3recon.yml`) or your home diretory (e.g. `~/s3recon.yml`).
 
-List of configurable values:
+The following is the list of configurable values:
 ```yaml
 # s3recon.yml
 
@@ -90,12 +90,12 @@ environments: ["", "backup", "backups", ...]
 regions: ["ap-northeast-1", "ap-northeast-2", ...]
 ```
 
-> To see the full list of configurable values (and their **defaults**) please refer to the [s3recon.yml](https://github.com/clarketm/s3recon/blob/master/s3recon/s3recon.yml) configuration file. 
+> To see the full list of configurable values (and their **defaults**) please refer to the [s3recon.yml](https://github.com/clarketm/s3recon/blob/master/s3recon/s3recon.yml) file in this repository. 
 
 
 #### Q: How do I customize the AWS regions used in the recon?
 #### A: 
-The AWS region can be altered by setting the `regions` array in your `s3recon.yml`. 
+The AWS *regions* can be altered by setting the `regions` array in your `s3recon.yml` configuration file. 
 ```yaml
 # s3recon.yml
 
@@ -103,27 +103,23 @@ regions: [ "us-west-2", ...]
 ```
 
 
-#### Q: How do I customize the values of the environment modifiers used in the recon?
+#### Q: How do I customize the values of the environment used in the recon?
 #### A: 
-The environment modifier are modifiers permuted with each item of the word-list and separator to for the bucket value in the lookup.
-The value can be altered by setting the `environments` array in your `s3recon.yml`.
+The *environments* are modifiers permuted with each item of the *word-list* (and the *separator*) to construct the bucket value in request.
+The value can be altered by setting the `environments` array in your `s3recon.yml` configuration file.
 
-For example, to only search lines from the word-list *verbatim* you can set this value to an empty array or an array with an empty string. 
+For example, to only search lines from the word-list *verbatim* (i.e. without modification) you can set this value to an empty array. 
 ```yaml
 # s3recon.yml
 
 environments: []
-
-# same effect as:
-environments: [""]
->  
-
+```
 
 ## Going Forward
 
-- [] Create `crawl` command to crawl public/private buckets found in `find` stage and output filenames.
+- [] Create `crawl` command to crawl public/private buckets found in `find` stage.
 - [] Separate out `find` and `crawl` as subcommands.
-- [] Store discovered buckets in a NoSQL datastore.
+- [] Store discovered buckets in a NoSQL database.
 
 ## License
 
