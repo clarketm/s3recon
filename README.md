@@ -122,9 +122,9 @@ environments: []
 
 ## Going Forward
 
-- [] Create `crawl` command to crawl public/private buckets found in `find` stage.
-- [] Separate out `find` and `crawl` as subcommands.
-- [] Store discovered buckets in a NoSQL database.
+- [ ] Create `crawl` command to crawl public/private buckets found in `find` stage.
+- [ ] Separate out `find` and `crawl` as subcommands.
+- [ ] Store discovered buckets in a NoSQL database.
 
 ## License
 
