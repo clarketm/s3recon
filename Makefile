@@ -16,7 +16,7 @@ build: clean
 
 .PHONY: test
 test:
-	python -m nose2 --start-dir . --with-coverage --coverage-report "term" --coverage-report "html"
+	@echo "not implemented"
 
 .PHONY: clean
 clean:

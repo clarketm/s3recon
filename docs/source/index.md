@@ -13,6 +13,9 @@ Version |version|
 .. image:: https://img.shields.io/pypi/v/s3recon.svg
     :target: https://pypi.org/project/s3recon/
 
+.. image:: https://img.shields.io/pypi/pyversions/s3recon.svg
+    :target: https://pypi.org/project/s3recon/
+
 .. image:: https://pepy.tech/badge/s3recon
     :target: https://pepy.tech/project/s3recon
     
