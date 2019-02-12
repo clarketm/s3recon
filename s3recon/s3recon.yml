@@ -1,6 +1,7 @@
-database:
-  host: "0.0.0.0"
+database: {
+  host: "0.0.0.0",
   port: 27017
+}
 
 separators: ["-", "_", "."]
 

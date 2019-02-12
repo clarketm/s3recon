@@ -164,9 +164,7 @@ The following is the list of configurable values:
 ```yaml
 # s3recon.yml
 
-database:
-  host: "0.0.0.0"
-  port: 27017
+database: { host: "0.0.0.0", ... }
   
 separators: ["-", "_", "."]
 
@@ -208,9 +206,10 @@ For example, `host` and `port` can be set directly inside the `database` map
 ```yaml
 # s3recon.yml
 
-database:
-  host: "0.0.0.0"
+database: {
+  host: "0.0.0.0",
   port: 27017
+}
 ```
 
 #### Q: How do I use a database other than MongoDB?
