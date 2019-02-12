@@ -1,8 +1,3 @@
-private_key = "-"
-private_text = "PRIVATE"
-public_key = "+"
-public_text = "PUBLIC"
-
 format_list = [
     "https://{region}.amazonaws.com/{word}{sep}{env}",
     "https://{region}.amazonaws.com/{env}{sep}{word}",
