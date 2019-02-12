@@ -7,7 +7,7 @@ from logging import getLogger, basicConfig, INFO
 from os import environ
 from pathlib import Path
 from random import choice
-from sys import stdout, path
+from sys import path
 from warnings import filterwarnings
 
 import requests
@@ -19,16 +19,9 @@ from yaml import load
 if not __package__:
     path.insert(0, str(Path(Path(__file__).parent.parent.parent)))
 
-
 from s3recon import __version__
-from s3recon.constants import (
-    useragent_list,
-    format_list,
-    public_key,
-    private_key,
-    public_text,
-    private_text,
-)
+from s3recon.constants import useragent_list, format_list
+from s3recon.mongodb import MongoDB, Hit, Access
 
 filterwarnings("ignore", category=InsecureRequestWarning)
 
@@ -59,24 +52,31 @@ def bucket_exists(url, timeout):
     return exists, public
 
 
-def find_bucket(url, timeout):
+def find_bucket(url, timeout, db):
     exists, public = bucket_exists(url, timeout)
 
     if exists:
-        access = public_key if public else private_key
-        access_word = public_text if public else private_text
-        logger.info(f"{access} {access_word} {url}")
-        return access, url
+        access = Access.PUBLIC if public else Access.PRIVATE
+        access_key = repr(access)
+        access_word = str(access).upper()
+        logger.info(f"{access_key} {access_word} {url}")
+
+        hit = Hit(url, access)
+        if db and hit.is_valid():
+            db.update({"url": url}, dict(hit))
+        return Hit(url, access)
 
     return None
 
 
-def collect_results(r):
+def collect_results(hits):
     d = defaultdict(list)
-    for access, url in filter(bool, r):
+    for hit in hits:
+        url = hit.url
+        access = repr(hit.access)
         d[access].append(url)
 
-    return d.get("-", []), d.get("+", [])
+    return d.get(repr(Access.PRIVATE), []), d.get(repr(Access.PUBLIC), [])
 
 
 def read_config():
@@ -101,14 +101,21 @@ def read_config():
     return config
 
 
-def main(words, timeout, output, only_public):
+def json_output_template(key, total, hits, exclude):
+    return {} if exclude else {key: {"total": total, "hits": hits}}
+
+
+def main(words, timeout, output, use_db, only_public):
     start = datetime.now()
     loop = get_event_loop()
 
     config = read_config()
+    database = config.get("database")
     regions = config.get("regions") or [""]
     separators = config.get("separators") or [""]
     environments = config.get("environments") or [""]
+
+    db = MongoDB(host=database["host"], port=database["port"])
 
     url_list = {
         f.format(
@@ -125,25 +132,30 @@ def main(words, timeout, output, only_public):
     }
 
     tasks = gather(
-        *[loop.run_in_executor(None, find_bucket, url, timeout) for url in url_list]
+        *[
+            loop.run_in_executor(
+                None, find_bucket, url, timeout, db if use_db else None
+            )
+            for url in url_list
+        ]
     )
-    r = loop.run_until_complete(tasks)
+    hits = filter(bool, loop.run_until_complete(tasks))
 
-    private, public = collect_results(r)
+    private, public = collect_results(hits)
+
+    if output:
+        json_result = {
+            **json_output_template(
+                str(Access.PRIVATE), len(private), private, only_public
+            ),
+            **json_output_template(str(Access.PUBLIC), len(public), public, False),
+        }
+
+        output.write(dumps(json_result, indent=4))
+        logger.info(f"Output written to file: {output.name}")
+
     stop = datetime.now()
-
     logger.info(f"Complete after: {stop - start}")
-    logger.info(f"Output written to: {output.name}")
-
-    results = {
-        "private": {"total": len(private), "hits": private},
-        "public": {"total": len(public), "hits": public},
-    }
-
-    if only_public:
-        del results["private"]
-
-    output.write(dumps(results, indent=4))
 
 
 def cli():
@@ -160,8 +172,10 @@ def cli():
         "--output",
         type=argparse.FileType("w"),
         metavar="file",
-        default=stdout,
-        help="write output to <file> (default: stdout)",
+        help="write output to <file>",
+    )
+    parser.add_argument(
+        "-d", "--db", action="store_true", help="write output to database"
     )
     parser.add_argument(
         "-p",
@@ -190,11 +204,12 @@ def cli():
     args = parser.parse_args()
 
     output = args.output
+    db = args.db
     timeout = args.timeout
     public = args.public
     words = {l.strip() for f in args.word_list for l in f}
 
-    main(words=words, timeout=timeout, output=output, only_public=public)
+    main(words=words, timeout=timeout, output=output, use_db=db, only_public=public)
 
 
 if __name__ == "__main__":
