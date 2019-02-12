@@ -136,7 +136,7 @@ $ s3recon "word-list.txt" --db
 ```
 
 #### 3. Inspect the results. 
-Check the `results.json` output file to view the S3 buckets you have discovered!
+Check the MongoDB database: `s3recon` collection: `hits` to view the S3 buckets you have discovered!
 
 ```bash
 $ mongo "s3recon" --quiet --eval 'db.hits.find({}, {"url": 1, "access": 1, "_id": 0}).limit(5)'
@@ -204,7 +204,7 @@ environments: []
 #### A: 
 The database *host* and *port* can be configured by altering the `database` map in your `s3recon.yml` configuration file.
 
-For example, to only search lines from the word-list *verbatim* (i.e. without modification) you can set this value to an empty array. 
+For example, `host` and `port` can be set directly inside the `database` map 
 ```yaml
 # s3recon.yml
 
@@ -215,7 +215,7 @@ database:
 
 #### Q: How do I use a database other than MongoDB?
 #### A: 
-At the moment only MongoDB is supported.
+Sorry, at the moment only MongoDB is supported.
 
 ## Going Forward
 
