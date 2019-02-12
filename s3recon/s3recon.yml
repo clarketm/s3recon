@@ -1,4 +1,9 @@
+database:
+  host: "0.0.0.0"
+  port: 27017
+
 separators: ["-", "_", "."]
+
 environments:
   [
     "",
@@ -13,6 +18,7 @@ environments:
     "test",
     "testing",
   ]
+
 regions:
   [
     "ap-northeast-1",
