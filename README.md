@@ -202,7 +202,7 @@ Sorry, at the moment only MongoDB is supported.
 
 - [ ] Create `crawl` command to crawl public/private buckets found in `find` stage.
 - [ ] Separate out `find` and `crawl` as subcommands.
-- [ ] Store discovered buckets in a NoSQL database.
+- [x] Store discovered buckets in a NoSQL database.
 
 ## Disclaimer
 This tools is distributed for educational and security purposes. I take no responsibility and assume no liability for the manner in which this tool is used.
