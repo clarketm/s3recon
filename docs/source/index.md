@@ -49,14 +49,15 @@ positional arguments:
 
 optional arguments:
   -h, --help                     show this help message and exit
-  -o file, --output file         write output to <file> (default: stdout)
+  -o file, --output file         write output to <file>
+  -d, --db                       write output to database
   -p, --public                   only include 'public' buckets in the output
   -t seconds, --timeout seconds  http request timeout in <seconds> (default: 30)
   -v, --version                  show program's version number and exit
   
 ```
 
-## Example
+## Example 1: Output to a json file
 
 #### 1. Download a word-list. 
 The [SecLists](https://github.com/clarketm/s3recon/edit/master/README.md) repository has a multitude of word-lists to choose from. For this example, let's download the sample word-list included in this repository.
@@ -106,6 +107,54 @@ Enumerate the static files located in each bucket and record the findings.
 > Coming soon!
 
 
+## Example 2: Output to a MongoDB database
+
+#### 1. Download a word-list. 
+The [SecLists](https://github.com/clarketm/s3recon/edit/master/README.md) repository has a multitude of word-lists to choose from. For this example, let's download the sample word-list included in this repository.
+
+```bash
+$ curl -sSfL -o "word-list.txt" "https://raw.githubusercontent.com/clarketm/s3recon/master/data/words.txt"
+```
+
+#### 2. Start an instance of MongoDB
+```text
+$ docker run --name "mongo" -p 27017:27017 -v "mongodb_data:/data/db" -v "mongodb_config:/data/configdb" -d mongo
+```
+
+#### 3. Run `s3recon`. 
+Execute `s3recon` using the `word-list.txt` file and output to MongoDB instance.
+
+```bash
+$ s3recon "word-list.txt" --db
+
+- PRIVATE https://s3.sa-east-1.amazonaws.com/test-lyft
+- PRIVATE https://s3.ap-south-1.amazonaws.com/test.amazon
++ PUBLIC https://walmart-dev.s3.us-east-1.amazonaws.com
+- PRIVATE https://s3.ap-southeast-1.amazonaws.com/apple-prod
+- PRIVATE https://walmart.s3.ap-southeast-1.amazonaws.com
+...
+```
+
+#### 3. Inspect the results. 
+Check the `results.json` output file to view the S3 buckets you have discovered!
+
+```bash
+$ mongo "s3recon" --quiet --eval 'db.hits.find({}, {"url": 1, "access": 1, "_id": 0}).limit(5)'
+```
+
+```json
+{ "url" : "https://s3.us-east-2.amazonaws.com/apple", "access" : "private" }
+{ "url" : "https://s3.us-west-1.amazonaws.com/microsoft-dev", "access" : "private" }
+{ "url" : "https://s3.us-west-1.amazonaws.com/dev-microsoft", "access" : "private" }
+{ "url" : "https://s3.us-east-2.amazonaws.com/amazon", "access" : "private" }
+{ "url" : "https://s3.us-east-1.amazonaws.com/dev-amazon", "access" : "private" }
+```
+
+#### 4. Crawl the results.
+Enumerate the static files located in each bucket and record the findings.
+> Coming soon!
+
+
 ## FAQ
 #### Q: How do I configure this utility?
 #### A: 
@@ -115,8 +164,14 @@ The following is the list of configurable values:
 ```yaml
 # s3recon.yml
 
+database:
+  host: "0.0.0.0"
+  port: 27017
+  
 separators: ["-", "_", "."]
+
 environments: ["", "backup", "backups", ...]
+
 regions: ["ap-northeast-1", "ap-northeast-2", ...]
 ```
 
@@ -145,11 +200,31 @@ For example, to only search lines from the word-list *verbatim* (i.e. without mo
 environments: []
 ```
 
+#### Q: How do I customize the MongoDB host and port?
+#### A: 
+The database *host* and *port* can be configured by altering the `database` map in your `s3recon.yml` configuration file.
+
+For example, to only search lines from the word-list *verbatim* (i.e. without modification) you can set this value to an empty array. 
+```yaml
+# s3recon.yml
+
+database:
+  host: "0.0.0.0"
+  port: 27017
+```
+
+#### Q: How do I use a database other than MongoDB?
+#### A: 
+At the moment only MongoDB is supported.
+
 ## Going Forward
 
 - [ ] Create `crawl` command to crawl public/private buckets found in `find` stage.
 - [ ] Separate out `find` and `crawl` as subcommands.
 - [ ] Store discovered buckets in a NoSQL database.
+
+## Disclaimer
+This tools is distributed for educational and security purposes. I take no responsibility and assume no liability for the manner in which this tool is used.
 
 ## License
 
