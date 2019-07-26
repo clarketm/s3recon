@@ -15,6 +15,7 @@ Amazon S3 bucket finder and crawler.
 [Check out the s3recon docs](https://s3recon.readthedocs.io/en/latest/)
 
 ## Installation
+> **NOTE**: s3recon requires python version **>=3.6**
 
 ```bash
 $ pip install s3recon
