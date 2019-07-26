@@ -14,7 +14,7 @@ import requests
 from mergedeep import merge
 from requests import RequestException
 from urllib3.exceptions import InsecureRequestWarning
-from yaml import load
+from yaml import safe_load as load
 
 if not __package__:
     path.insert(0, str(Path(Path(__file__).parent.parent.parent)))
