@@ -115,8 +115,6 @@ def main(words, timeout, output, use_db, only_public):
     separators = config.get("separators") or [""]
     environments = config.get("environments") or [""]
 
-    db = MongoDB(host=database["host"], port=database["port"])
-
     url_list = {
         f.format(
             region=f"s3.{region}" if region else "s3",
@@ -134,7 +132,13 @@ def main(words, timeout, output, use_db, only_public):
     tasks = gather(
         *[
             loop.run_in_executor(
-                None, find_bucket, url, timeout, db if use_db else None
+                None,
+                find_bucket,
+                url,
+                timeout,
+                MongoDB(host=database["host"], port=database["port"])
+                if use_db
+                else None,
             )
             for url in url_list
         ]
