@@ -15,9 +15,19 @@ environments:
     "prod",
     "production",
     "stage",
+    "stg",
+    "main",
+    "assets2",
     "staging",
     "test",
     "testing",
+    "private",
+    "upload",
+    "uploads",
+    "assets",
+    "asset",
+    "static",
+    "images",
   ]
 
 regions:
