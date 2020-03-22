@@ -41,7 +41,7 @@ endif
 .PHONY: release
 release: tag
 ifdef version
-	curl -XPOST \
+	curl -sSLf -XPOST \
 	-H "Authorization: token ${GITHUB_ACCESS_TOKEN}" \
 	-H "Content-Type: application/json" \
 	"https://api.github.com/repos/clarketm/${project}/releases" \

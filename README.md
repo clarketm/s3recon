@@ -24,7 +24,7 @@ $ pip install s3recon
 ## Usage
 ```text
 
-usage: s3recon [-h] [-o file] [-t seconds] word_list [word_list ...]
+usage: s3recon [-h] [-o file] [-d] [-p] [-t seconds] [-v] [-c num] word_list [word_list ...]
 
 positional arguments:
   word_list                      read words from one or more <word-list> files
@@ -36,6 +36,7 @@ optional arguments:
   -p, --public                   only include 'public' buckets in the output
   -t seconds, --timeout seconds  http request timeout in <seconds> (default: 30)
   -v, --version                  show program's version number and exit
+  -c num, --concurrency num      maximum <num> of concurrent requests (default: # of lcpus)
   
 ```
 

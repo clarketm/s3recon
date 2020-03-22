@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-from asyncio import get_event_loop, gather
+from asyncio import get_event_loop, gather, Semaphore
 from collections import defaultdict
 from datetime import datetime
 from json import dumps
 from logging import getLogger, basicConfig, INFO
-from os import environ
+from os import environ, cpu_count
 from pathlib import Path
 from random import choice
 from sys import path
@@ -25,6 +25,7 @@ from s3recon.constants import useragent_list, format_list
 from s3recon.mongodb import MongoDB, Hit, Access
 
 filterwarnings("ignore", category=InsecureRequestWarning)
+cpus = cpu_count() or 1
 
 logger = getLogger(__name__)
 
@@ -53,21 +54,22 @@ def bucket_exists(url, timeout):
     return exists, public
 
 
-def find_bucket(url, timeout, db):
-    exists, public = bucket_exists(url, timeout)
+async def find_bucket(url, timeout, db, sem):
+    async with sem:
+        exists, public = bucket_exists(url, timeout)
 
-    if exists:
-        access = Access.PUBLIC if public else Access.PRIVATE
-        access_key = repr(access)
-        access_word = str(access).upper()
-        logger.info(f"{access_key} {access_word} {url}")
+        if exists:
+            access = Access.PUBLIC if public else Access.PRIVATE
+            access_key = repr(access)
+            access_word = str(access).upper()
+            logger.info(f"{access_key} {access_word} {url}")
 
-        hit = Hit(url, access)
-        if db and hit.is_valid():
-            db.update({"url": url}, dict(hit))
-        return Hit(url, access)
+            hit = Hit(url, access)
+            if db and hit.is_valid():
+                db.update({"url": url}, dict(hit))
+            return Hit(url, access)
 
-    return None
+        return None
 
 
 def collect_results(hits):
@@ -106,7 +108,7 @@ def json_output_template(key, total, hits, exclude):
     return {} if exclude else {key: {"total": total, "hits": hits}}
 
 
-def main(words, timeout, output, use_db, only_public):
+def main(words, timeout, concurrency, output, use_db, only_public):
     start = datetime.now()
     loop = get_event_loop()
 
@@ -127,16 +129,16 @@ def main(words, timeout, output, use_db, only_public):
         for env in environments
     }
 
+    db = MongoDB(host=database["host"], port=database["port"]) if use_db else None
+    sem = Semaphore(concurrency)
+
     tasks = gather(
         *[
-            loop.run_in_executor(
-                None,
-                find_bucket,
+            find_bucket(
                 url,
                 timeout,
-                MongoDB(host=database["host"], port=database["port"])
-                if use_db
-                else None,
+                db,
+                sem
             )
             for url in url_list
         ]
@@ -196,6 +198,14 @@ def cli():
     parser.add_argument(
         "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )
+    parser.add_argument(
+        "-c",
+        "--concurrency",
+        type=int,
+        metavar="num",
+        default=cpus,
+        help=f"maximum <num> of concurrent requests (default: {cpus})",
+    )
     # parser.add_argument("words", nargs="?", type=argparse.FileType("r"), default=stdin, help="list of words to permute")
     parser.add_argument(
         "word_list",
@@ -208,10 +218,11 @@ def cli():
     output = args.output
     db = args.db
     timeout = args.timeout
+    concurrency = args.concurrency
     public = args.public
     words = {l.strip() for f in args.word_list for l in f}
 
-    main(words=words, timeout=timeout, output=output, use_db=db, only_public=public)
+    main(words=words, timeout=timeout, concurrency=max(1, concurrency), output=output, use_db=db, only_public=public)
 
 
 if __name__ == "__main__":
