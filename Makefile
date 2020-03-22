@@ -52,3 +52,5 @@ endif
 publish upload: test clean build check
 	twine upload dist/*
 
+.PHONY: deploy
+deploy: release publish

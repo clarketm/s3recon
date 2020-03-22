@@ -14,7 +14,7 @@ with open_local(["s3recon", "__init__.py"]) as f:
 with open_local(["README.md"]) as f:
     long_description = f.read()
 
-install_requires = ["mergedeep>=1.0"]
+install_requires = ["mergedeep>=1.1", "requests>=2.23", "pymongo>=3.10", "pyyaml>=5.3"]
 
 setuptools.setup(
     name="s3recon",
@@ -34,6 +34,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ),
