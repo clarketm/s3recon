@@ -9,6 +9,7 @@ from pathlib import Path
 from random import choice
 from sys import path
 from warnings import filterwarnings
+import subprocess
 
 import requests
 from mergedeep import merge
@@ -36,16 +37,16 @@ def bucket_exists(url, timeout):
     public = False
 
     try:
-        res = requests.head(
-            url,
-            headers={"User-Agent": choice(useragent_list)},
-            verify=False,
-            timeout=timeout,
+        s3_output = subprocess.Popen(
+            ['aws', 's3', 'ls', url, '--recursive', '--human-readable', '--summarize'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
         )
-        # TODO: handle redirects
-        status_code = res.status_code
-        exists = status_code != 404
-        public = status_code == 200
+        stdout, stderr = s3_output.communicate()
+        exists = ("AccessDenied" in stderr.decode()) or (not stderr.decode()) #check if is empty
+        public = not stderr.decode()
+    except subprocess.CalledProcessError:
+        pass
     except RequestException:
         pass
 
@@ -111,19 +112,16 @@ def main(words, timeout, output, use_db, only_public):
 
     config = read_config()
     database = config.get("database")
-    regions = config.get("regions") or [""]
     separators = config.get("separators") or [""]
     environments = config.get("environments") or [""]
 
     url_list = {
         f.format(
-            region=f"s3.{region}" if region else "s3",
             word=word,
             sep=sep if env else "",
             env=env,
         )
         for f in format_list
-        for region in regions
         for word in words
         for sep in separators
         for env in environments
